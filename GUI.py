@@ -11,7 +11,13 @@ def DisplayBoard():
           row = row + " " + "□"
       else:
         if board[x][y].PieceColour == 'w':
-          row = row + " " + 'w'
+          if board[x][y].queen == False:
+            row = row + " " + 'w'
+          else:
+            row = row + " " + 'W'
         else:
-          row = row + " " + 'b'
+          if board[x][y].queen == False:
+            row = row + " " + 'b'
+          else:
+            row = row + " " + 'B'
     print(row)

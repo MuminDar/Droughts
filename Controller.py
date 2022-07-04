@@ -26,7 +26,22 @@ def ValidateMove(CurrentX,CurrentY,Direction):
       if board[CurrentX-1][CurrentY-1] == 0:
         MovePiece(CurrentX,CurrentY,Direction)
       else:
-        pass #incomplete
-
-
+        print("Invalid move")
+    if Direction == 'UpRight':
+      if board[CurrentX-1][CurrentY+1] == 0:
+        MovePiece(CurrentX,CurrentY,Direction)
+      else:
+        print("Invalid move")
+    if Direction == 'DownLeft':
+      if board[CurrentX+1][CurrentY-1] == 0:
+        MovePiece(CurrentX,CurrentY,Direction)
+      else:
+        print("Invalid move")
+    if Direction == 'DownRight':
+      if board[CurrentX+1][CurrentY+1] == 0:
+        MovePiece(CurrentX,CurrentY,Direction)
+      else:
+        print("Invalid move")
+    
   
+

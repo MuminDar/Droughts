@@ -27,3 +27,9 @@ def SaveBoard():
         else:
           row = row + " " + 'b'
     BoardFile.write(row + "\n")
+
+def QueenCheck (CurrentX, CurrentY):
+  if board[CurrentX][CurrentY].PieceColour == "w" and CurrentX == 0: 
+    board[CurrentX][CurrentY].queen == True 
+  elif board[CurrentX][CurrentY].PieceColour == "b" and CurrentX == 9: 
+    board[CurrentX][CurrentY].queen == True

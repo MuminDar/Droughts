@@ -1,23 +1,19 @@
 import Board
 import GUI
 import Controller
+
 Board.initialise()
 GUI.DisplayBoard()
 
-print('---------------------')
+loop = True
 
-Controller.ValidateMove(3,3,'DownRight')
-GUI.DisplayBoard()
-
-print('---------------------')
-
-Controller.ValidateMove(6,8,'UpLeft')
-GUI.DisplayBoard()
-
-print('---------------------')
-
-Controller.ValidateMove(1,1,'UpLeft')
-GUI.DisplayBoard()
+while True:
+  X = int(input('what X position: '))
+  Y = int(input('what Y position: '))
+  if X == 'STOP':
+    loop = False
+  Controller.findMoves(X,Y)
+  GUI.DisplayBoard()
 Board.SaveBoard()
 
 #commented

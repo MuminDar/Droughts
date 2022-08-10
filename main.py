@@ -36,8 +36,6 @@ class Board:
       board[CurrentX][CurrentY].queen == True
 
 
-
-
 class GUI:
   def DisplayBoard(self):
     for x in range (10):
@@ -62,25 +60,22 @@ class GUI:
       print(row)
 
 
-
 class Controller:
   def MovePiece(self,CurrentX,CurrentY,Direction):
-    if Direction == 'UL':
-      temp = board[CurrentX][CurrentY]
-      board[CurrentX-1][CurrentY-1] = temp
-      board[CurrentX][CurrentY] = 0
-    elif Direction == 'UR':
-      temp = board[CurrentX][CurrentY]
-      board[CurrentX-1][CurrentY+1] = temp
-      board[CurrentX][CurrentY] = 0
-    elif Direction == 'DL':
-      temp = board[CurrentX][CurrentY]
-      board[CurrentX+1][CurrentY-1] = temp
-      board[CurrentX][CurrentY] = 0
-    elif Direction == 'DR':
-      temp = board[CurrentX][CurrentY]
-      board[CurrentX+1][CurrentY+1] = temp
-      board[CurrentX][CurrentY] = 0
+    x = 0
+    y = 0
+    if Direction[0] == 'D':
+      x = 1
+    else:
+      x = -1
+    if Direction[1] == 'R':
+      y = 1
+    else: 
+      y = -1 
+    temp = board[CurrentX][CurrentY]
+    board[CurrentX+x][CurrentY+y] = temp
+    board[CurrentX][CurrentY] = 0
+
   
   def ValidateMove(self,CurrentX,CurrentY,Direction):
     if board[CurrentX][CurrentY] == 0:

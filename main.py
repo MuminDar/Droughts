@@ -1,14 +1,12 @@
-board = [[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],      
-         [0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0], 
-         [0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0]]
+board = [[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0]]
 
-class Board:
+class Board:    
   class piece:
     def __init__(self,colour):
       self.PieceColour = colour
       self.queen = False
   
-  def initialise(self):
+  def __init__(self):
     for x in range (10):
       for y in range(10):
         if (x+y)% 2 == 0:
@@ -23,12 +21,12 @@ class Board:
       row = ""
       for y in range (10):
         if board[x][y] == 0:
-          row = row + " " + str(board[x][y])
+          row = row + str(board[x][y])
         else:
           if board[x][y].PieceColour == 'w':
-            row = row + " " + 'w'
+            row = row +  'w'
           else:
-            row = row + " " + 'b'
+            row = row + 'b'
       BoardFile.write(row + "\n")
   
   def QueenCheck (self,CurrentX, CurrentY):
@@ -89,23 +87,15 @@ class Controller:
       return(False)
     else:
       if board[CurrentX][CurrentY].PieceColour == 'b' or board[CurrentX][CurrentY].queen == True:
-        if CurrentY != 0 and CurrentX != 0:
-          if Direction == 'UpLeft':
-            if board[CurrentX-1][CurrentY-1] == 0:
-              return(True)
-        if CurrentY != 9 and CurrentX != 0:
-          if Direction == 'UpRight':
-            if board[CurrentX-1][CurrentY+1] == 0:
-              return(True)
+        if CurrentY != 0 and CurrentX != 0 and Direction == 'UpLeft' and board[CurrentX-1][CurrentY-1] == 0:
+          return(True)
+        if CurrentY != 9 and CurrentX != 0 and Direction == 'UpRight' and board[CurrentX-1][CurrentY+1] == 0:
+          return(True)
       if board[CurrentX][CurrentY].PieceColour == 'w' or board[CurrentX][CurrentY].queen == True:
-        if CurrentY != 0 and CurrentX != 9:
-          if Direction == 'DownLeft':
-            if board[CurrentX+1][CurrentY-1] == 0:
-              return(True)
-        if CurrentY != 9 and CurrentX != 9:
-          if Direction == 'DownRight':
-            if board[CurrentX+1][CurrentY+1] == 0:
-              return(True)
+        if CurrentY != 0 and CurrentX != 9 and Direction == 'DownLeft' and board[CurrentX+1][CurrentY-1] == 0:
+          return(True)
+        if CurrentY != 9 and CurrentX != 9 and Direction == 'DownRight' and board[CurrentX+1][CurrentY+1] == 0:
+          return(True)
     return(False)
   
   def findMoves(self,CurrentX,CurrentY):
@@ -135,8 +125,7 @@ class Controller:
           NoMove = True
           
         else:
-          Move = input('Type your Move Here: ')
-    
+          Move = input('Type your Move Here: ').upper()
           if Move == 'UL' and not UpLeft:
             print('Invalid Choice, Cant Move there.')
           elif Move == 'UR' and not UpRight:
@@ -150,9 +139,7 @@ class Controller:
           else:
             self.MovePiece(CurrentX, CurrentY, Move)
             ValidMove = True
-          
-      
-      
+
       return UpLeft, UpRight, DownLeft, DownRight
 
 
@@ -160,18 +147,19 @@ Board_OBJ = Board()
 GUI_OBJ = GUI()
 Controller_OBJ = Controller()
 
-Board_OBJ.initialise()
 GUI_OBJ.DisplayBoard()
 
 loop = True
+turn = "White"
 
-while True:
+while loop:
   X = int(input('what X position: '))
-  Y = int(input('what Y position: '))
-  if X == 'STOP':
+  if X == -1 :
     loop = False
-  Controller_OBJ.findMoves(X,Y)
-  GUI_OBJ.DisplayBoard()
-Board_OBJ.SaveBoard()
+  else:
+    Y = int(input('what Y position: '))
+    Controller_OBJ.findMoves(X,Y)
+    GUI_OBJ.DisplayBoard()
+    Board_OBJ.SaveBoard()
 
 #commented

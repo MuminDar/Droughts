@@ -20,7 +20,7 @@ def MovePiece(CurrentX,CurrentY,Direction):
 
 def ValidateMove(CurrentX,CurrentY,Direction):
   if board[CurrentX][CurrentY] == 0:
-    print('Incorrect Move: Not a Piece')
+    return(False)
   else:
     if board[CurrentX][CurrentY].PieceColour == 'b' or board[CurrentX][CurrentY].queen == True:
       if CurrentY != 0 and CurrentX != 0:

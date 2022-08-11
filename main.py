@@ -1,6 +1,9 @@
 board = [[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0]]
 
-class Board:    
+
+# code later for counting black white pieces on load board
+
+class Board:   
   class piece:
     def __init__(self,colour):
       self.PieceColour = colour
@@ -28,12 +31,29 @@ class Board:
           else:
             row = row + "b"
       BoardFile.write(row + "\n")
+
+  def LoadSave(self):
+    row = 0
+    BoardFile = open("board.txt","r")
+    for line in BoardFile:
+      column = 0
+      for char in line.strip():
+        if char == '0':
+          board[row][column] = 0
+        elif char.lower() == 'w' or char.lower() == 'b':
+          if char == char.lower():
+            board[row][column] = self.piece(char,False)
+          else:
+            board[row][column] = self.piece(char,True)
+        column += 1
+      row += 1
   
   def QueenCheck (self,CurrentX, CurrentY):
     if board[CurrentX][CurrentY].PieceColour == "w" and CurrentX == 0: 
       board[CurrentX][CurrentY].queen == True 
     elif board[CurrentX][CurrentY].PieceColour == "b" and CurrentX == 9: 
       board[CurrentX][CurrentY].queen == True
+  
 
 
 class GUI:
@@ -59,8 +79,14 @@ class GUI:
               row = row + " " + "B"
       print(row)
 
+  
 
 class Controller:
+  def __init__(self):
+    self.MorT = ""
+    self.PieceCountW = 20
+    self.PieceCountB = 20
+
   def MovePiece(self,CurrentX,CurrentY,Direction):
     x = 0
     y = 0
@@ -72,28 +98,40 @@ class Controller:
       y = 1
     else: 
       y = -1 
+    if self.MorT == "T" :
+      x = x*2
+      y = y*2  
     temp = board[CurrentX][CurrentY]
     board[CurrentX+x][CurrentY+y] = temp
     board[CurrentX][CurrentY] = 0
 
-  
   def ValidateMove(self,CurrentX,CurrentY,Direction):
+    valid = False 
     if board[CurrentX][CurrentY] == 0:
-      return(False)
+      valid = False 
     else:
+      if self.MorT == "T": 
+        m = 2
+      else:
+        m = 1
       if board[CurrentX][CurrentY].PieceColour == "b" or board[CurrentX][CurrentY].queen == True:
-        if CurrentY != 0 and CurrentX != 0 and Direction == "UpLeft" and board[CurrentX-1][CurrentY-1] == 0:
-          return(True)
-        if CurrentY != 9 and CurrentX != 0 and Direction == "UpRight" and board[CurrentX-1][CurrentY+1] == 0:
-          return(True)
+        if CurrentY != 0 and CurrentX != 0 and Direction == "UpLeft" and board[CurrentX-m][CurrentY-m] == 0:    
+          valid = True
+        if CurrentY != 9 and CurrentX != 0 and Direction == "UpRight" and board[CurrentX-m][CurrentY+m] == 0:
+          valid = True
+        if self.MorT == "T":
+          valid = self.CheckTakePossible(CurrentX, CurrentY, Direction)
       if board[CurrentX][CurrentY].PieceColour == "w" or board[CurrentX][CurrentY].queen == True:
-        if CurrentY != 0 and CurrentX != 9 and Direction == "DownLeft" and board[CurrentX+1][CurrentY-1] == 0:
-          return(True)
-        if CurrentY != 9 and CurrentX != 9 and Direction == "DownRight" and board[CurrentX+1][CurrentY+1] == 0:
-          return(True)
-    return(False)
+        if CurrentY != 0 and CurrentX != 9 and Direction == "DownLeft" and board[CurrentX+m][CurrentY-m] == 0:
+          valid = True
+        if CurrentY != 9 and CurrentX != 9 and Direction == "DownRight" and board[CurrentX+m][CurrentY+m] == 0 :
+          valid = True
+        if self.MorT == "T":
+          valid = self.CheckTakePossible(CurrentX, CurrentY, Direction)
+    return valid 
   
   def findMoves(self,CurrentX,CurrentY):
+    print(self.MorT)
     if CurrentX > 9 or CurrentY > 9:
       print("Coordintes out of range")
       return False
@@ -127,17 +165,64 @@ class Controller:
             print("Invalid Choice, Cant Move there.")
           elif Move == "DL" and not DownLeft:
             print("Invalid Choice, Cant Move there.")
-          elif Move == "DR"and not DownLeft:
+          elif Move == "DR"and not DownRight:
             print("Invalid Choice, Cant Move there.")
           elif Move not in ["UL","UR","DL","DR"]:
             print("Invlaid Input")
           else:
             self.MovePiece(CurrentX, CurrentY, Move)
             ValidMove = True
-
+            if self.MorT == "T":
+              self.TakePiece(CurrentX, CurrentY, Move)
       return ValidMove
+      
+  def CheckTakePossible(self, CurrentX, CurrentY, Direction):
+    if board[CurrentX][CurrentY].PieceColour == "b":
+      if Direction == "UpLeft" and board[CurrentX-1][CurrentY-1] != 0:
+        if board[CurrentX-1][CurrentY-1].PieceColour == "w":
+          return True
+      if Direction == "UpRight" and board[CurrentX-1][CurrentY+1] != 0:
+        if board[CurrentX-1][CurrentY+1].PieceColour == "w":
+          return True
+      if Direction == "DownLeft" and board[CurrentX+1][CurrentY-1] != 0:
+        if board[CurrentX+1][CurrentY-1].PieceColour == "w":
+          return True
+      if Direction == "DownRight" and board[CurrentX+1][CurrentY+1] != 0:
+        if board[CurrentX+1][CurrentY+1].PieceColour == "w":
+          return True
+    if board[CurrentX][CurrentY].PieceColour == "w":
+      if Direction == "UpLeft" and board[CurrentX-1][CurrentY-1] != 0:
+        if board[CurrentX-1][CurrentY-1].PieceColour == "b":
+          return True
+      if Direction == "UpRight" and board[CurrentX-1][CurrentY+1] != 0:
+        if board[CurrentX-1][CurrentY+1].PieceColour == "b":
+          return True
+      if Direction == "DownLeft" and board[CurrentX+1][CurrentY-1] != 0:
+        if board[CurrentX+1][CurrentY-1].PieceColour == "b":
+          return True
+      if Direction == "DownRight" and board[CurrentX+1][CurrentY+1] != 0:
+        if board[CurrentX+1][CurrentY+1].PieceColour == "b":
+          return True
+    return False
+      
+  def TakePiece(self, CurrentX, CurrentY, Direction):
+    if Direction == "UL" :
+      board[CurrentX-1][CurrentY-1] = 0
+    elif Direction == "UR":
+      board[CurrentX-1][CurrentY+1] = 0
+    elif Direction == "DL" :
+      board[CurrentX+1][CurrentY-1] = 0
+    elif Direction == "DR":
+      board[CurrentX+1][CurrentY+1] = 0
+    
+    if turn == "w":
+      self.PieceCountB -= 1 
+    else:
+      self.PieceCountW -= 1 
 
-
+# check take should be run somewhere else not in validate move 
+        #pls figure it out duture dan 
+  
 Board_OBJ = Board()
 GUI_OBJ = GUI()
 Controller_OBJ = Controller()
@@ -145,7 +230,6 @@ Controller_OBJ = Controller()
 GUI_OBJ.DisplayBoard()
 
 turn = "w" 
-
 loop = True
 while loop:
   print("Turn: ", turn)
@@ -154,9 +238,11 @@ while loop:
     loop = False
   else:
     Y = int(input("what Y position: "))
+    Controller_OBJ.MorT = input("Would you like to move or take (M/T)").upper()
     if board[X][Y] == 0 :
       X = int(input("what X position: "))
       Y = int(input("what Y position: "))
+      Controller_OBJ.MorT = input("Would you like to move or take (M/T)").upper()
     elif board[X][Y].PieceColour == turn:
       ValidMove = Controller_OBJ.findMoves(X,Y)
       GUI_OBJ.DisplayBoard()

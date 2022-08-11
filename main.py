@@ -1,6 +1,5 @@
 board = [[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0]]
 
-
 # code later for counting black white pieces on load board
 
 class Board:   
@@ -53,8 +52,6 @@ class Board:
       board[CurrentX][CurrentY].queen == True 
     elif board[CurrentX][CurrentY].PieceColour == "b" and CurrentX == 9: 
       board[CurrentX][CurrentY].queen == True
-  
-
 
 class GUI:
   def DisplayBoard(self):
@@ -78,8 +75,6 @@ class GUI:
             else:
               row = row + " " + "B"
       print(row)
-
-  
 
 class Controller:
   def __init__(self):
@@ -220,9 +215,6 @@ class Controller:
     else:
       self.PieceCountW -= 1 
 
-# check take should be run somewhere else not in validate move 
-        #pls figure it out duture dan 
-  
 Board_OBJ = Board()
 GUI_OBJ = GUI()
 Controller_OBJ = Controller()

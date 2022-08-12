@@ -4,18 +4,18 @@ board = [[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,
 
 class Board:   
   class piece:
-    def __init__(self,colour):
+    def __init__(self,colour,Queen):
       self.PieceColour = colour
-      self.queen = False
+      self.queen = Queen
   
   def __init__(self):
     for x in range (10):
       for y in range(10):
         if (x+y)% 2 == 0:
           if x<=3:
-            board[x][y] = self.piece("w")
+            board[x][y] = self.piece("w",False)
           elif x>=6:
-            board[x][y] = self.piece("b")
+            board[x][y] = self.piece("b",False)
     
   def SaveBoard(self):
     BoardFile = open("board.txt","w")
@@ -41,9 +41,9 @@ class Board:
           board[row][column] = 0
         elif char.lower() == 'w' or char.lower() == 'b':
           if char == char.lower():
-            board[row][column] = self.piece(char,False)
+            board[row][column] = self.piece(char.lower(),False)
           else:
-            board[row][column] = self.piece(char,True)
+            board[row][column] = self.piece(char.lower(),True)
         column += 1
       row += 1
   

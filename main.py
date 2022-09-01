@@ -54,6 +54,7 @@ class Controller:
     self.PieceCountW = 20
     self.PieceCountB = 20
     self.turn = "w"
+    self.multimove = False
 
   def MovePiece(self,CurrentX,CurrentY,Direction):
     x = 0
@@ -74,14 +75,40 @@ class Controller:
     board[CurrentX+x][CurrentY+y] = temp
     self.QueenCheck(CurrentX+x,CurrentY+y)
     board[CurrentX][CurrentY] = 0
-    GUI.displayBoard(GUI_OBJ)
-    GUI.displayButtons(GUI_OBJ,False,False,False,False)
-    if self.turn == "w":
-      self.turn = "b"
-      GUI.DisplayTurn(GUI_OBJ, 'Black')
-    elif self.turn == "b":
-      self.turn = "w"
-      GUI.DisplayTurn(GUI_OBJ, 'White')
+    #updating only the tiles changed
+    GUI.updateTile(GUI_OBJ, CurrentX, CurrentY)
+    GUI.updateTile(GUI_OBJ, CurrentX+x, CurrentY+y)
+    if self.MorT == 'T':
+      GUI.updateTile(GUI_OBJ, CurrentX+int(x/2), CurrentY+int(y/2))
+
+    UL = self.CheckTakePossible(CurrentX+x,CurrentY+y, 'UL')
+    UR = self.CheckTakePossible(CurrentX+x,CurrentY+y, 'UR')
+    DL = self.CheckTakePossible(CurrentX+x,CurrentY+y, 'DL')
+    DR = self.CheckTakePossible(CurrentX+x,CurrentY+y, 'DR')
+    
+    if (not DL and not DR and not UL and not UR) or self.MorT != 'T':
+      GUI.displayButtons(GUI_OBJ,False,False,False,False)
+      if self.turn == "w":
+        self.turn = "b"
+        GUI.DisplayTurn(GUI_OBJ, 'Black')
+      elif self.turn == "b":
+        self.turn = "w"
+        GUI.DisplayTurn(GUI_OBJ, 'White')
+      GUI.MorT_Switch(GUI_OBJ)
+      if self.multimove == True:
+        GUI.displayBoard(GUI_OBJ)
+        self.multimove = False
+    else:
+      GUI.updateXY(GUI_OBJ, CurrentX+x, CurrentY+y)
+      GUI.displayButtons(GUI_OBJ,UL,UR,DL,DR)
+      GUI.disableMorT(GUI_OBJ)
+      if self.multimove == False:
+        GUI.disableBoard(GUI_OBJ)
+      GUI_OBJ.is_on = True
+      self.multimove = True
+    
+    self.WinCheck()
+      
 
   def ValidateMove(self,CurrentX,CurrentY,Direction):
     valid = False 
@@ -164,11 +191,17 @@ class Controller:
     else:
       self.PieceCountW -= 1 
 
-  def QueenCheck (self,CurrentX, CurrentY):
+  def QueenCheck(self,CurrentX, CurrentY):
     if board[CurrentX][CurrentY].PieceColour == "w" and CurrentX == 9: 
       board[CurrentX][CurrentY].queen = True 
     elif board[CurrentX][CurrentY].PieceColour == "b" and CurrentX == 0: 
       board[CurrentX][CurrentY].queen = True
+
+  def WinCheck(self):
+    if self.PieceCountB == 0:
+      GUI.WinScreen(GUI_OBJ, 'White')
+    elif self.PieceCountW == 0:
+      GUI.WinScreen(GUI_OBJ, 'Black')
 
 class GUI:
   def __init__(self):
@@ -194,25 +227,32 @@ class GUI:
     
     for row in range(10):
       for column in range(10):
-        if board[row][column] != 0:
-          if board[row][column].PieceColour == 'w':
-            if board[row][column].queen == False:
-              tk.Button(self.canvas, image=self.WhitePiece, command=lambda row=row, column=column: click(row, column)).grid(row=row,column=column)
-            else:
-              tk.Button(self.canvas, image=self.WhiteQueen, command=lambda row=row, column=column: click(row, column)).grid(row=row,column=column)
-          else:
-            if board[row][column].queen == False:
-              tk.Button(self.canvas, image=self.BlackPiece, command=lambda row=row, column=column: click(row, column)).grid(row=row,column=column)
-            else:
-              tk.Button(self.canvas, image=self.BlackQueen, command=lambda row=row, column=column: click(row, column)).grid(row=row,column=column)
+        self.updateTile(row,column)
+
+  def updateTile(self, row, column):
+    def click(row,column):
+      Controller.findMoves(Controller_OBJ,row,column)
+      self.ROW = row
+      self.COLUMN = column
+    
+    if board[row][column] != 0:
+      if board[row][column].PieceColour == 'w':
+        if board[row][column].queen == False:
+          tk.Button(self.canvas, image=self.WhitePiece, command=lambda row=row, column=column: click(row, column)).grid(row=row,column=column)
         else:
-          if (row+column)%2 == 0:
-            tk.Button(self.canvas, image=self.BlackTile, state=tk.DISABLED).grid(row=row,column=column)
-          else:
-            tk.Button(self.canvas, image=self.WhiteTile, state=tk.DISABLED).grid(row=row,column=column)
+          tk.Button(self.canvas, image=self.WhiteQueen, command=lambda row=row, column=column: click(row, column)).grid(row=row,column=column)
+      else:
+        if board[row][column].queen == False:
+          tk.Button(self.canvas, image=self.BlackPiece, command=lambda row=row, column=column: click(row, column)).grid(row=row,column=column)
+        else:
+          tk.Button(self.canvas, image=self.BlackQueen, command=lambda row=row, column=column: click(row, column)).grid(row=row,column=column)
+    else:
+      if (row+column)%2 == 0:
+        tk.Button(self.canvas, image=self.BlackTile, relief= 'sunken').grid(row=row,column=column)
+      else:
+        tk.Button(self.canvas, image=self.WhiteTile, relief= 'sunken').grid(row=row,column=column)
   
   def displayButtons(self, UpLeft, UpRight, DownLeft, DownRight):
-    
     if UpLeft:
       tk.Button(self.canvas, bg= 'green', text= 'UL', command=lambda:Controller.MovePiece(Controller_OBJ,self.ROW, self.COLUMN, 'UL')).grid(row=4,column=12)
     else:
@@ -246,19 +286,55 @@ class GUI:
     tk.Button(self.canvas, bg= 'blue', text= 'Move', command= switch).grid(row=5,column=13)
     Controller_OBJ.MorT = 'M'
 
+  def disableMorT(self):
+    tk.Button(self.canvas, bg= 'red', text= 'Take', relief= 'sunken').grid(row=5,column=13)
+
+  def disableBoard(self):
+    for row in range(10):
+      for column in range(10):
+        if board[row][column] != 0:
+          if board[row][column].PieceColour == 'w':
+            if board[row][column].queen == False:
+              tk.Button(self.canvas, image=self.WhitePiece, relief= 'sunken').grid(row=row,column=column)
+            else:
+              tk.Button(self.canvas, image=self.WhiteQueen, relief= 'sunken').grid(row=row,column=column)
+          else:
+            if board[row][column].queen == False:
+              tk.Button(self.canvas, image=self.BlackPiece, relief= 'sunken').grid(row=row,column=column)
+            else:
+              tk.Button(self.canvas, image=self.BlackQueen, relief= 'sunken').grid(row=row,column=column)
+        else:
+          if (row+column)%2 == 0:
+            tk.Button(self.canvas, image=self.BlackTile,relief= 'sunken').grid(row=row,column=column)
+          else:
+            tk.Button(self.canvas, image=self.WhiteTile,relief= 'sunken').grid(row=row,column=column)
+
+  def updateXY(self, newROW, newCOLUMN):
+    self.ROW = newROW
+    self.COLUMN = newCOLUMN
+  
   def DisplayTurn(self, turn):
     tk.Label(self.canvas, text=turn).grid(row=3,column=13)
+
+  def ClearScreen(self):
+    self.canvas.destroy()
+    print('die')
+  
+  def WinScreen(self, winner):
+    self.ClearScreen()
+    self.canvas = tk.Canvas(self.window, width=600, height=400)
+    self.canvas.grid()
+    tk.Label(self.canvas, text=f'{winner} is the Winner !!!', font=("Times New Roman", 25)).grid(row=1,column=15, padx = 50, pady = 150)
 
 Board_OBJ = Board()
 GUI_OBJ = GUI()
 Controller_OBJ = Controller()
 
 GUI.DisplayTurn(GUI_OBJ, 'White')
-loop = True
-while loop:
-  GUI_OBJ.displayBoard()
-  GUI_OBJ.displayButtons(False,False,False,False)
-  GUI_OBJ.MorT_Switch()
-  Board_OBJ.SaveBoard()
-  tk.mainloop()
+
+GUI_OBJ.displayBoard()
+GUI_OBJ.displayButtons(False,False,False,False)
+GUI_OBJ.MorT_Switch()
+
+tk.mainloop()
 #commented

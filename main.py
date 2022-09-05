@@ -27,9 +27,15 @@ class Board:
           row = row + str(board[x][y])
         else:
           if board[x][y].PieceColour == "w":
-            row = row +  "w"
+            if board[x][y].queen == True:
+              row = row +  "W"
+            else:
+              row = row +  "w"
           else:
-            row = row + "b"
+            if board[x][y].queen == True:
+              row = row +  "B"
+            else:
+              row = row + "b"
       BoardFile.write(row + "\n")
 
   def LoadSave(self):
@@ -47,6 +53,7 @@ class Board:
             board[row][column] = self.piece(char.lower(),True)
         column += 1
       row += 1
+    GUI.displayBoard(GUI_OBJ)
 
 class Controller:
   def __init__(self):
@@ -289,6 +296,10 @@ class GUI:
   def disableMorT(self):
     tk.Button(self.canvas, bg= 'red', text= 'Take', relief= 'sunken').grid(row=5,column=13)
 
+  def SaveLoadButtons(self):
+    tk.Button(self.canvas, bg= 'red', text= 'Save', command=lambda:Board.SaveBoard(Board_OBJ)).grid(row=9,column=12)
+    tk.Button(self.canvas, bg= 'red', text= 'Load', command=lambda:Board.LoadSave(Board_OBJ)).grid(row=8,column=12)
+  
   def disableBoard(self):
     for row in range(10):
       for column in range(10):
@@ -334,6 +345,7 @@ GUI.DisplayTurn(GUI_OBJ, 'White')
 
 GUI_OBJ.displayBoard()
 GUI_OBJ.displayButtons(False,False,False,False)
+GUI_OBJ.SaveLoadButtons()
 GUI_OBJ.MorT_Switch()
 
 tk.mainloop()

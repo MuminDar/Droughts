@@ -467,9 +467,9 @@ class Game:
     elif self.turn == "b":
       self.turn = "w"
       GUI.DisplayTurn(GUI_OBJ, 'White')
-    if self.AICount > 0:
+    if self.AICount > 0 and Game_OBJ.PieceCountB > 0:
       AI_OBJ.MakeMove()
-    if self.AICount > 1:
+    if self.AICount > 1 and Game_OBJ.PieceCountW > 0:
       AI_OBJ2.MakeMove()
 
   def setup(self):
@@ -529,5 +529,5 @@ class Game:
 
 Game_OBJ = Game()
 
-Game_OBJ.PVE()
+Game_OBJ.EVE()
 #commented

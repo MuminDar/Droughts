@@ -338,6 +338,30 @@ class GUI:
     self.canvas.grid()
     tk.Label(self.canvas, text=f'{winner} is the Winner !!!', font=("Times New Roman", 25)).grid(row=1,column=1, padx = 50, pady = 150)
 
+  def Menu(self):
+    def PVP():
+      self.ClearScreen()
+      self.canvas = tk.Canvas(self.window, width=600, height=400)
+      self.canvas.grid()
+      Game_OBJ.PVP()
+    def PVE():
+      self.ClearScreen()
+      self.canvas = tk.Canvas(self.window, width=600, height=400)
+      self.canvas.grid()
+      Game_OBJ.PVE()
+    def EVE():
+      self.ClearScreen()
+      self.canvas = tk.Canvas(self.window, width=600, height=400)
+      self.canvas.grid()
+      Game_OBJ.EVE()
+    
+    tk.Button(self.canvas, bg= 'green', text= '   PVP   ', command= PVP).grid(row=0,column=0, padx = 50, pady = 5)
+    tk.Button(self.canvas, bg= 'blue', text= '   PVE   ', command= PVE).grid(row=1,column=0, padx = 50, pady = 5)
+    tk.Button(self.canvas, bg= 'red', text= '   EVE   ', command= EVE).grid(row=2,column=0, padx = 50, pady = 5)
+    
+    tk.mainloop()
+    
+
 
 class AI(Controller):
   def __init__(self, colour):
@@ -482,10 +506,8 @@ class Game:
 
   def PVP(self):
     global Board_OBJ
-    global GUI_OBJ
     global Controller_OBJ
     Board_OBJ = Board()
-    GUI_OBJ = GUI()
     Controller_OBJ = Controller()
     
     self.setup()
@@ -494,11 +516,9 @@ class Game:
 
   def PVE(self):
     global Board_OBJ
-    global GUI_OBJ
     global Controller_OBJ
     global AI_OBJ
     Board_OBJ = Board()
-    GUI_OBJ = GUI()
     Controller_OBJ = Controller()
     AI_OBJ = AI('b')
     self.AICount = 1
@@ -509,12 +529,10 @@ class Game:
 
   def EVE(self):
     global Board_OBJ
-    global GUI_OBJ
     global Controller_OBJ
     global AI_OBJ
     global AI_OBJ2
     Board_OBJ = Board()
-    GUI_OBJ = GUI()
     Controller_OBJ = Controller()
     AI_OBJ = AI('b')
     AI_OBJ2 = AI('w')
@@ -528,6 +546,7 @@ class Game:
     tk.mainloop()
 
 Game_OBJ = Game()
-
-Game_OBJ.EVE()
+GUI_OBJ = GUI()
+#Game_OBJ.PVE()
+GUI_OBJ.Menu()
 #commented

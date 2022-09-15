@@ -39,6 +39,7 @@ class Board:
             else:
               row = row + "b"
       BoardFile.write(row + "\n")
+    BoardFile.write(Game_OBJ.turn)
 
   def LoadSave(self):
     Game_OBJ.PieceCountW = 0
@@ -47,20 +48,28 @@ class Board:
     BoardFile = open("board.txt","r")
     for line in BoardFile:
       column = 0
-      for char in line.strip():
-        if char == '0':
-          board[row][column] = 0
-        elif char.lower() == 'w' or char.lower() == 'b':
-          if char == char.lower():
-            board[row][column] = self.piece(char.lower(),False)
-          else:
-            board[row][column] = self.piece(char.lower(),True)
-          if char.lower() == 'w':
-            Game_OBJ.PieceCountW += 1
-          elif char.lower() == 'b':
-            Game_OBJ.PieceCountB += 1
-        column += 1
-      row += 1
+      if line == 'w' or line =='b':
+        if line == 'w':
+          Game_OBJ.turn = 'w'
+          GUI_OBJ.DisplayTurn('White')
+        else:
+          Game_OBJ.turn = 'b'
+          GUI_OBJ.DisplayTurn('Black')
+      else:
+        for char in line.strip():
+          if char == '0':
+            board[row][column] = 0
+          elif char.lower() == 'w' or char.lower() == 'b':
+            if char == char.lower():
+              board[row][column] = self.piece(char.lower(),False)
+            else:
+              board[row][column] = self.piece(char.lower(),True)
+            if char.lower() == 'w':
+              Game_OBJ.PieceCountW += 1
+            elif char.lower() == 'b':
+              Game_OBJ.PieceCountB += 1
+          column += 1
+        row += 1
     GUI.displayBoard(GUI_OBJ)
     GUI.displayScores(GUI_OBJ)
 

@@ -553,7 +553,7 @@ class Game:
     AI_OBJ = AI('b')
     self.AICount = 1
     
-    self.WhiteAccount = input('White Account: ')
+    GUI_OBJ.InputAccounts(1)
     self.BlackAccount = 'AI'
     
     if Accounts_OBJ.FindAccount(self.WhiteAccount) == -1:

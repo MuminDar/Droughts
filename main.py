@@ -264,6 +264,8 @@ class GUI:
         tk.Button(self.canvas, image=self.BlackTile, relief= 'sunken').grid(row=row,column=column)
       else:
         tk.Button(self.canvas, image=self.WhiteTile, relief= 'sunken').grid(row=row,column=column)
+    tk.Label(self.canvas, text='    ').grid(row=5,column=10)
+    tk.Label(self.canvas, text='    ').grid(row=5,column=15)
   
   def displayButtons(self, UpLeft, UpRight, DownLeft, DownRight):
     if UpLeft:
@@ -301,8 +303,8 @@ class GUI:
     tk.Button(self.canvas, bg= 'red', text= 'Take', relief= 'sunken').grid(row=5,column=13)
 
   def SaveLoadButtons(self):
-    tk.Button(self.canvas, bg= 'red', text= 'Save', command=lambda:Board.SaveBoard(Board_OBJ)).grid(row=9,column=12)
-    tk.Button(self.canvas, bg= 'red', text= 'Load', command=lambda:Board.LoadSave(Board_OBJ)).grid(row=8,column=12)
+    tk.Button(self.canvas, bg= 'red', text= 'Save', command=lambda:Board.SaveBoard(Board_OBJ)).grid(row=9,column=13)
+    tk.Button(self.canvas, bg= 'red', text= 'Load', command=lambda:Board.LoadSave(Board_OBJ)).grid(row=8,column=13)
   
   def disableBoard(self):
     for row in range(10):
@@ -364,19 +366,25 @@ class GUI:
 
 
   def InputAccounts(self,players):
+    WhiteAccount=tk.StringVar()
+    BlackAccount=tk.StringVar()
     def click():
+      WAccount = WhiteAccount.get()
+      BAccount = BlackAccount.get()
+      Game_OBJ.WhiteAccount = WAccount
+      Game_OBJ.BlackAccount = BAccount
       self.canvas.quit()
       self.ClearScreen()
     if players ==2:
       tk.Label(self.canvas,text='White').grid(row=0,column=0)
-      tk.Entry(self.canvas,textvariable=Game_OBJ.WhiteAccount).grid(row=0,column=1)
+      tk.Entry(self.canvas,textvariable=WhiteAccount).grid(row=0,column=1)
       tk.Label(self.canvas,text='Black').grid(row=1,column=0)
-      tk.Entry(self.canvas,textvariable=Game_OBJ.BlackAccount).grid(row=1,column=1)
+      tk.Entry(self.canvas,textvariable=BlackAccount).grid(row=1,column=1)
       tk.Button(self.canvas,text='Start Game', command=click).grid(row=3,column=0)
       tk.mainloop()
     elif players ==1:
       tk.Label(self.canvas,text='White').grid(row=0,column=0)
-      tk.Entry(self.canvas, text= 'White',textvariable=Game_OBJ.WhiteAccount).grid(row=0,column=1)
+      tk.Entry(self.canvas, text= 'White',textvariable=WhiteAccount).grid(row=0,column=1)
       tk.Button(self.canvas,text='Start Game', command=click).grid(row=3,column=0)
       tk.mainloop()
 
@@ -534,7 +542,6 @@ class Game:
     Controller_OBJ = Controller()
 
     GUI_OBJ.InputAccounts(2)
-
     if Accounts_OBJ.FindAccount(self.WhiteAccount) == -1:
       Accounts_OBJ.AddAccount(self.WhiteAccount)
     if Accounts_OBJ.FindAccount(self.BlackAccount) == -1:
@@ -620,5 +627,5 @@ class Accounts:
 Accounts_OBJ = Accounts()
 Game_OBJ = Game()
 GUI_OBJ = GUI()
-while True:
-  GUI_OBJ.Menu()
+
+GUI_OBJ.Menu()

@@ -1,6 +1,7 @@
 import tkinter as tk
 from random import randint
 from time import sleep
+import pandas as pd
 board = [[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0]]
 
 # code later for counting black white pieces on load board
@@ -124,7 +125,6 @@ class Controller:
       GUI.disableMorT(GUI_OBJ)
       if self.multimove == False:
         GUI.disableBoard(GUI_OBJ)
-      GUI_OBJ.is_on = True
       self.multimove = True
     
     Game_OBJ.WinCheck()
@@ -223,15 +223,14 @@ class GUI:
     self.window.title('Draughts')
     self.canvas = tk.Canvas(self.window, width=600, height=400)
     self.canvas.grid()
-    self.WhiteTile = tk.PhotoImage(file='WhiteTile.png')
-    self.BlackTile = tk.PhotoImage(file='BlackTile.png')
-    self.WhitePiece = tk.PhotoImage(file='WhitePiece.png')
-    self.BlackPiece = tk.PhotoImage(file='BlackPiece.png')
-    self.WhiteQueen = tk.PhotoImage(file='WhiteQueen.png')
-    self.BlackQueen = tk.PhotoImage(file='BlackQueen.png')
+    self.WhiteTile = tk.PhotoImage(file='Icons/WhiteTile.png')
+    self.BlackTile = tk.PhotoImage(file='Icons/BlackTile.png')
+    self.WhitePiece = tk.PhotoImage(file='Icons/WhitePiece.png')
+    self.BlackPiece = tk.PhotoImage(file='Icons/BlackPiece.png')
+    self.WhiteQueen = tk.PhotoImage(file='Icons/WhiteQueen.png')
+    self.BlackQueen = tk.PhotoImage(file='Icons/BlackQueen.png')
     self.ROW = 0
     self.COLUMN = 0
-    self.is_on = True
     
   def displayBoard(self):
     def click(row,column):
@@ -268,32 +267,30 @@ class GUI:
   
   def displayButtons(self, UpLeft, UpRight, DownLeft, DownRight):
     if UpLeft:
-      tk.Button(self.canvas, bg= 'green', text= 'UL', command=lambda:Controller_OBJ.MovePiece(self.ROW, self.COLUMN, 'UL')).grid(row=4,column=12)
+      tk.Button(self.canvas, bg= 'green', text= '↖', command=lambda:Controller_OBJ.MovePiece(self.ROW, self.COLUMN, 'UL')).grid(row=4,column=12)
     else:
-      tk.Button(self.canvas, bg= 'grey', text= 'UL', state= tk.DISABLED).grid(row=4,column=12)
+      tk.Button(self.canvas, bg= 'grey', text= '↖', state= tk.DISABLED).grid(row=4,column=12)
     if UpRight:
-      tk.Button(self.canvas, bg= 'green', text= 'UR', command=lambda:Controller_OBJ.MovePiece(self.ROW, self.COLUMN, 'UR')).grid(row=4,column=14)
+      tk.Button(self.canvas, bg= 'green', text= '↗', command=lambda:Controller_OBJ.MovePiece(self.ROW, self.COLUMN, 'UR')).grid(row=4,column=14)
     else:
-      tk.Button(self.canvas, bg= 'grey', text= 'UR', state= tk.DISABLED).grid(row=4,column=14)
+      tk.Button(self.canvas, bg= 'grey', text= '↗', state= tk.DISABLED).grid(row=4,column=14)
     if DownLeft:
-      tk.Button(self.canvas, bg= 'green', text= 'DL', command=lambda:Controller_OBJ.MovePiece(self.ROW, self.COLUMN, 'DL')).grid(row=6,column=12)
+      tk.Button(self.canvas, bg= 'green', text= '↙', command=lambda:Controller_OBJ.MovePiece(self.ROW, self.COLUMN, 'DL')).grid(row=6,column=12)
     else:
-      tk.Button(self.canvas, bg= 'grey', text= 'DL', state= tk.DISABLED).grid(row=6,column=12)
+      tk.Button(self.canvas, bg= 'grey', text= '↙', state= tk.DISABLED).grid(row=6,column=12)
     if DownRight:
-      tk.Button(self.canvas, bg= 'green', text= 'DR', command=lambda:Controller_OBJ.MovePiece(self.ROW, self.COLUMN, 'DR')).grid(row=6,column=14)
+      tk.Button(self.canvas, bg= 'green', text= '↘', command=lambda:Controller_OBJ.MovePiece(self.ROW, self.COLUMN, 'DR')).grid(row=6,column=14)
     else:
-      tk.Button(self.canvas, bg= 'grey', text= 'DR', state= tk.DISABLED).grid(row=6,column=14)
+      tk.Button(self.canvas, bg= 'grey', text= '↘', state= tk.DISABLED).grid(row=6,column=14)
 
   def MorT_Switch(self):
     #Mort Switch
     def switch():
       # Determine is on or off
-      if self.is_on:
-        self.is_on = False
+      if Controller_OBJ.MorT == 'M':
         tk.Button(self.canvas, bg= 'red', text= 'Take', command= switch).grid(row=5,column=13)
         Controller_OBJ.MorT = 'T'
       else:
-        self.is_on = True
         tk.Button(self.canvas, bg= 'blue', text= 'Move', command= switch).grid(row=5,column=13)
         Controller_OBJ.MorT = 'M'
       self.displayButtons(False,False,False,False)
@@ -336,6 +333,8 @@ class GUI:
 
   def ClearScreen(self):
     self.canvas.destroy()
+    self.canvas = tk.Canvas(self.window, width=600, height=400)
+    self.canvas.grid()
 
   def displayScores(self):
     tk.Label(self.canvas, text=f'W : {Game_OBJ.PieceCountW} ').grid(row=0,column=13)
@@ -343,25 +342,17 @@ class GUI:
   
   def WinScreen(self, winner):
     self.ClearScreen()
-    self.canvas = tk.Canvas(self.window, width=600, height=400)
-    self.canvas.grid()
     tk.Label(self.canvas, text=f'{winner} is the Winner !!!', font=("Times New Roman", 25)).grid(row=1,column=1, padx = 50, pady = 150)
 
   def Menu(self):
     def PVP():
       self.ClearScreen()
-      self.canvas = tk.Canvas(self.window, width=600, height=400)
-      self.canvas.grid()
       Game_OBJ.PVP()
     def PVE():
       self.ClearScreen()
-      self.canvas = tk.Canvas(self.window, width=600, height=400)
-      self.canvas.grid()
       Game_OBJ.PVE()
     def EVE():
       self.ClearScreen()
-      self.canvas = tk.Canvas(self.window, width=600, height=400)
-      self.canvas.grid()
       Game_OBJ.EVE()
     
     tk.Button(self.canvas, bg= 'green', text= '   PVP   ', command= PVP).grid(row=0,column=0, padx = 50, pady = 5)
@@ -371,6 +362,23 @@ class GUI:
     tk.mainloop()
     
 
+
+  def InputAccounts(self,players):
+    def click():
+      self.canvas.quit()
+      self.ClearScreen()
+    if players ==2:
+      tk.Label(self.canvas,text='White').grid(row=0,column=0)
+      tk.Entry(self.canvas,textvariable=Game_OBJ.WhiteAccount).grid(row=0,column=1)
+      tk.Label(self.canvas,text='Black').grid(row=1,column=0)
+      tk.Entry(self.canvas,textvariable=Game_OBJ.BlackAccount).grid(row=1,column=1)
+      tk.Button(self.canvas,text='Start Game', command=click).grid(row=3,column=0)
+      tk.mainloop()
+    elif players ==1:
+      tk.Label(self.canvas,text='White').grid(row=0,column=0)
+      tk.Entry(self.canvas, text= 'White',textvariable=Game_OBJ.WhiteAccount).grid(row=0,column=1)
+      tk.Button(self.canvas,text='Start Game', command=click).grid(row=3,column=0)
+      tk.mainloop()
 
 class AI(Controller):
   def __init__(self, colour):
@@ -486,12 +494,18 @@ class Game:
     self.PieceCountB = 20
     self.turn = "w"
     self.AICount = 0
+    self.WhiteAccount = ''
+    self.BlackAccount = ''
 
   def WinCheck(self):
     if Game_OBJ.PieceCountB == 0:
       GUI.WinScreen(GUI_OBJ, 'White')
+      Accounts_OBJ.AddWin(self.WhiteAccount)
+      Accounts_OBJ.AddLoss(self.BlackAccount)
     elif Game_OBJ.PieceCountW == 0:
       GUI.WinScreen(GUI_OBJ, 'Black')
+      Accounts_OBJ.AddWin(self.BlackAccount)
+      Accounts_OBJ.AddLoss(self.WhiteAccount)
 
   def turnChange(self):
     if self.turn == "w":
@@ -518,6 +532,13 @@ class Game:
     global Controller_OBJ
     Board_OBJ = Board()
     Controller_OBJ = Controller()
+
+    GUI_OBJ.InputAccounts(2)
+
+    if Accounts_OBJ.FindAccount(self.WhiteAccount) == -1:
+      Accounts_OBJ.AddAccount(self.WhiteAccount)
+    if Accounts_OBJ.FindAccount(self.BlackAccount) == -1:
+      Accounts_OBJ.AddAccount(self.BlackAccount)
     
     self.setup()
     
@@ -532,6 +553,11 @@ class Game:
     AI_OBJ = AI('b')
     self.AICount = 1
     
+    self.WhiteAccount = input('White Account: ')
+    self.BlackAccount = 'AI'
+    
+    if Accounts_OBJ.FindAccount(self.WhiteAccount) == -1:
+      Accounts_OBJ.AddAccount(self.WhiteAccount)
     self.setup()
 
     tk.mainloop()
@@ -547,15 +573,52 @@ class Game:
     AI_OBJ2 = AI('w')
 
     self.AICount = 2
+    self.WhiteAccount = 'AI'
+    self.BlackAccount = 'AI'
     
     AI_OBJ2.MakeMove()
     
     self.setup()
 
     tk.mainloop()
+class Accounts:
+  def __init__(self):
+    self.PATH = 'accounts.csv'
+    self.df = pd.read_csv(self.PATH)
+  def AddAccount(self,NewName):
+    NewRow = [NewName, 0, 0, 0]
+    self.df.loc[len(self.df)] = NewRow
+    self.SaveToCSV()
+  
+  def FindAccount(self,Name):
+    Found = False
+    for i in range(len(self.df)):
+      tempName = self.df.loc[i,'name']
+      if tempName == Name:
+        Found = True
+        break
+    if Found == False:
+      i = -1
+    return(i)
+  
+  def SaveToCSV(self):
+    self.df.to_csv(self.PATH, index=False)
 
+  def AddWin(self,Name):
+    i = self.FindAccount(Name)
+    if i != -1:
+      self.df.loc[i,'games'] = self.df.loc[i,'games'] + 1
+      self.df.loc[i,'wins'] = self.df.loc[i,'wins'] + 1
+    self.SaveToCSV()
+  def AddLoss(self,Name):
+    i = self.FindAccount(Name)
+    if i != -1:
+      self.df.loc[i,'games'] = self.df.loc[i,'games'] + 1
+      self.df.loc[i,'losses'] = self.df.loc[i,'losses'] + 1
+    self.SaveToCSV()
+
+Accounts_OBJ = Accounts()
 Game_OBJ = Game()
 GUI_OBJ = GUI()
-#Game_OBJ.PVE()
-GUI_OBJ.Menu()
-#commented
+while True:
+  GUI_OBJ.Menu()

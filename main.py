@@ -391,7 +391,6 @@ class GUI:
 class AI(Controller):
   def __init__(self, colour):
     Controller.__init__(self)
-    self.HighestPoints = 0
     self.BestX = []
     self.BestY = []
     self.BestMove = []
@@ -610,7 +609,6 @@ class Accounts:
   
   def SaveToCSV(self):
     self.df.to_csv(self.PATH, index=False)
-
   def AddWin(self,Name):
     i = self.FindAccount(Name)
     if i != -1:

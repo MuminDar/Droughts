@@ -4,6 +4,7 @@ from time import sleep
 import pandas as pd
 board = [[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0]]
 
+
 class Board:   
   class piece:
     def __init__(self,colour,Queen):
@@ -18,6 +19,10 @@ class Board:
             board[x][y] = self.piece("w",False)
           elif x>=6:
             board[x][y] = self.piece("b",False)
+          else:
+            board[x][y] = 0
+        else:
+          board[x][y] = 0
     
   def SaveBoard(self):
     BoardFile = open("board.txt","w")
@@ -367,8 +372,6 @@ class GUI:
     
     tk.mainloop()
     
-
-
   def InputAccounts(self,players):
     WhiteAccount=tk.StringVar()
     BlackAccount=tk.StringVar()
@@ -486,6 +489,8 @@ class AI(Controller):
                       self.BestX.append(row)
                       self.BestY.append(column)
                       self.BestMove.append(move)
+                    
+  
       #randomize if there are multiple possible moves
       rand = randint(0, (len(self.BestX)-1))
       self.BestX = self.BestX[rand]
@@ -549,6 +554,8 @@ class Game:
       Accounts_OBJ.AddAccount(self.BlackAccount)
     
     self.setup()
+    
+    tk.mainloop()
 
   def PVE(self):
     global Board_OBJ
@@ -565,6 +572,8 @@ class Game:
     if Accounts_OBJ.FindAccount(self.WhiteAccount) == -1:
       Accounts_OBJ.AddAccount(self.WhiteAccount)
     self.setup()
+
+    tk.mainloop()
 
   def EVE(self):
     global Board_OBJ
@@ -584,6 +593,7 @@ class Game:
     
     self.setup()
 
+    tk.mainloop()
 class Accounts:
   def __init__(self):
     self.PATH = 'accounts.csv'

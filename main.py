@@ -4,7 +4,6 @@ from time import sleep
 import pandas as pd
 board = [[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0]]
 
-
 class Board:   
   class piece:
     def __init__(self,colour,Queen):
@@ -342,8 +341,12 @@ class GUI:
     tk.Label(self.canvas, text=f'B : {Game_OBJ.PieceCountB} ').grid(row=1,column=13)
   
   def WinScreen(self, winner):
+    def click():
+      self.ClearScreen()
+      self.Menu()
     self.ClearScreen()
-    tk.Label(self.canvas, text=f'{winner} is the Winner !!!', font=("Times New Roman", 25)).grid(row=1,column=1, padx = 50, pady = 150)
+    tk.Label(self.canvas, text=f'{winner} is the Winner !!!', font=("Times New Roman", 25)).grid(row=1,column=1, padx = 50, pady = 140)
+    tk.Button(self.canvas, text='Menu', command=click, bg='green').grid(row=2,column=1)
 
   def Menu(self):
     def PVP():
@@ -355,10 +358,12 @@ class GUI:
     def EVE():
       self.ClearScreen()
       Game_OBJ.EVE()
-    
+    def Leaderbaord():
+      print(Accounts_OBJ.df)
     tk.Button(self.canvas, bg= 'green', text= '   PVP   ', command= PVP).grid(row=0,column=0, padx = 50, pady = 5)
     tk.Button(self.canvas, bg= 'blue', text= '   PVE   ', command= PVE).grid(row=1,column=0, padx = 50, pady = 5)
     tk.Button(self.canvas, bg= 'red', text= '   EVE   ', command= EVE).grid(row=2,column=0, padx = 50, pady = 5)
+    tk.Button(self.canvas, bg= 'red', text= 'Leaderboard', command= Leaderbaord).grid(row=3,column=0, padx = 50, pady = 5)
     
     tk.mainloop()
     
@@ -481,8 +486,6 @@ class AI(Controller):
                       self.BestX.append(row)
                       self.BestY.append(column)
                       self.BestMove.append(move)
-                    
-  
       #randomize if there are multiple possible moves
       rand = randint(0, (len(self.BestX)-1))
       self.BestX = self.BestX[rand]
@@ -546,8 +549,6 @@ class Game:
       Accounts_OBJ.AddAccount(self.BlackAccount)
     
     self.setup()
-    
-    tk.mainloop()
 
   def PVE(self):
     global Board_OBJ
@@ -564,8 +565,6 @@ class Game:
     if Accounts_OBJ.FindAccount(self.WhiteAccount) == -1:
       Accounts_OBJ.AddAccount(self.WhiteAccount)
     self.setup()
-
-    tk.mainloop()
 
   def EVE(self):
     global Board_OBJ
@@ -585,7 +584,6 @@ class Game:
     
     self.setup()
 
-    tk.mainloop()
 class Accounts:
   def __init__(self):
     self.PATH = 'accounts.csv'
